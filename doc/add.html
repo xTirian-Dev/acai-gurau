@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADD — Descrição de Arquitetura · CRM Açaí Gurau</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="topbar-logo-icon">AG</div>
+    Açaí Gurau
+  </a>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-doc">ADD — Descrição de Arquitetura</span>
+  <div class="topbar-right">
+    <span class="topbar-badge add">ISO/IEC/IEEE 42010:2011</span>
+    <a href="index.html" class="topbar-home">← Índice</a>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Documento</div>
+      <a href="#s1" class="sidebar-link active"><span class="sidebar-link-num">1</span> Introdução</a>
+      <a href="#s2" class="sidebar-link"><span class="sidebar-link-num">2</span> Stakeholders</a>
+      <a href="#s3" class="sidebar-link"><span class="sidebar-link-num">3</span> Viewpoints</a>
+      <a href="#s4" class="sidebar-link"><span class="sidebar-link-num">4</span> View — Contexto</a>
+      <a href="#s5" class="sidebar-link"><span class="sidebar-link-num">5</span> View — Containers</a>
+      <a href="#s6" class="sidebar-link"><span class="sidebar-link-num">6</span> View — Componentes</a>
+      <a href="#s7" class="sidebar-link"><span class="sidebar-link-num">7</span> View — Implantação</a>
+      <a href="#s8" class="sidebar-link"><span class="sidebar-link-num">8</span> Decisões (ADRs)</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Outros documentos</div>
+      <a href="srs.html" class="sidebar-link"><span class="sidebar-link-num" style="color:var(--blue)">SRS</span> Requisitos</a>
+      <a href="sdd.html" class="sidebar-link"><span class="sidebar-link-num" style="color:var(--amber)">SDD</span> Design</a>
+    </div>
+  </nav>
+
+  <main class="content">
+
+    <div class="doc-header">
+      <div class="doc-norm">ISO/IEC/IEEE 42010:2011 — Systems and software engineering — Architecture description</div>
+      <h1 class="doc-title">Descrição de Arquitetura do Sistema</h1>
+      <p class="doc-subtitle">Descreve a arquitetura do CRM Açaí Gurau através de múltiplos viewpoints, cobrindo contexto, containers, componentes, implantação e as decisões arquiteturais registradas.</p>
+      <div class="doc-meta-row">
+        <div class="doc-meta-item"><span class="doc-meta-label">Documento</span><span class="doc-meta-val">ADD-AG-001</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.0.0</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">18 de Março de 2026</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Autor</span><span class="doc-meta-val">Matheus Fernandes Cunha</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Contratante</span><span class="doc-meta-val">Monk Studio</span></div>
+      </div>
+    </div>
+
+    <!-- 1. INTRODUÇÃO -->
+    <div class="doc-section" id="s1">
+      <div class="section-num">1</div>
+      <div class="section-title">Introdução</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §4 — Architecture description</div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title">1.1 Propósito</div>
+          <p>Este documento descreve a arquitetura do sistema CRM Açaí Gurau, identificando os principais elementos arquiteturais, suas responsabilidades, relacionamentos e as decisões que moldaram o design. Serve como referência para desenvolvimento, implantação e manutenção futura.</p>
+        </div>
+        <div class="subsection">
+          <div class="subsection-title">1.2 Sistema de Interesse (SoI)</div>
+          <p>O sistema de interesse é a plataforma CRM com automação WhatsApp e IA conversacional, composta por uma API REST em Laravel, um SPA em Vue.js, uma instância da Evolution API e integração com o serviço de IA DeepSeek V3.2. Todos os componentes rodam em containers Docker em um único VPS Hetzner.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. STAKEHOLDERS ARQUITETURAIS -->
+    <div class="doc-section" id="s2">
+      <div class="section-num">2</div>
+      <div class="section-title">Stakeholders Arquiteturais</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.3 — Architecture stakeholders</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>Stakeholder</th><th>Preocupação Arquitetural</th><th>Viewpoints Relevantes</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Matheus F. Cunha</strong> (Engenheiro)</td><td>Manutenibilidade, implantação simples, testabilidade, separação de responsabilidades</td><td>Containers, Componentes, Implantação</td></tr>
+            <tr><td><strong>Monk Studio</strong> (Contratante)</td><td>Prazo de entrega, escalabilidade futura, custo de infraestrutura</td><td>Contexto, Implantação</td></tr>
+            <tr><td><strong>Açaí Gurau</strong> (Operador)</td><td>Disponibilidade, performance, segurança dos dados de clientes B2B</td><td>Contexto, Implantação</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. VIEWPOINTS -->
+    <div class="doc-section" id="s3">
+      <div class="section-num">3</div>
+      <div class="section-title">Viewpoints Arquiteturais</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.5 — Architecture viewpoints</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>Viewpoint</th><th>Propósito</th><th>Seção</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Contexto</strong></td><td>Posiciona o sistema em relação aos atores e sistemas externos</td><td>§4</td></tr>
+            <tr><td><strong>Containers</strong></td><td>Descreve as unidades de implantação e suas responsabilidades</td><td>§5</td></tr>
+            <tr><td><strong>Componentes</strong></td><td>Detalha os módulos internos da API e suas interfaces</td><td>§6</td></tr>
+            <tr><td><strong>Implantação</strong></td><td>Mapeia os containers para a infraestrutura física (VPS + Docker)</td><td>§7</td></tr>
+          </tbody>
+        </table>
+        <div class="info-box">Esta documentação adota o modelo C4 (Context, Container, Component, Code) como base para os viewpoints, adaptado à notação da ISO/IEC/IEEE 42010:2011.</div>
+      </div>
+    </div>
+
+    <!-- 4. VIEW CONTEXTO -->
+    <div class="doc-section" id="s4">
+      <div class="section-num">4</div>
+      <div class="section-title">View — Contexto do Sistema</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.6 — Architecture views · Nível C4-L1</div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title">4.1 Atores Externos</div>
+          <table class="doc-table">
+            <thead><tr><th>Ator / Sistema</th><th>Tipo</th><th>Interação</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Agente (time Açaí Gurau)</strong></td><td>Usuário humano</td><td>Acessa o CRM via browser (HTTPS)</td></tr>
+              <tr><td><strong>Cliente B2B (distribuidor/PDV)</strong></td><td>Usuário indireto</td><td>Troca mensagens via WhatsApp</td></tr>
+              <tr><td><strong>WhatsApp / Meta</strong></td><td>Sistema externo</td><td>Entrega e recebe mensagens via Evolution API</td></tr>
+              <tr><td><strong>DeepSeek API</strong></td><td>Serviço externo</td><td>Processa prompts e retorna respostas de IA (HTTPS/REST)</td></tr>
+              <tr><td><strong>Hetzner Cloud</strong></td><td>Infraestrutura</td><td>Hospeda o VPS com todos os containers</td></tr>
+              <tr><td><strong>Cloudflare</strong></td><td>Serviço externo</td><td>DNS, CDN e terminação SSL</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="subsection">
+          <div class="subsection-title">4.2 Fluxo Principal de Contexto</div>
+          <div class="code-block">Agente → [HTTPS] → CRM Frontend (Vue.js)
+                        ↓
+              CRM API (Laravel) ←→ MySQL + Redis
+                        ↓
+              Evolution API ←→ WhatsApp/Meta
+                        ↓
+              DeepSeek API (quando IA ativa)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. VIEW CONTAINERS -->
+    <div class="doc-section" id="s5">
+      <div class="section-num">5</div>
+      <div class="section-title">View — Containers</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.6 · Nível C4-L2</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>Container</th><th>Tecnologia</th><th>Responsabilidade</th><th>Porta</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>crm-api</strong></td>
+              <td>Laravel 11 + PHP 8.3 + FPM</td>
+              <td>API REST — autenticação, CRM, pipeline, integração com Evolution API e DeepSeek</td>
+              <td>9000 (interno)</td>
+            </tr>
+            <tr>
+              <td><strong>crm-frontend</strong></td>
+              <td>Vue.js 3 + Vite (build estático servido pelo Nginx)</td>
+              <td>SPA — interface do usuário, consome a crm-api via REST</td>
+              <td>80/443</td>
+            </tr>
+            <tr>
+              <td><strong>nginx</strong></td>
+              <td>Nginx 1.25</td>
+              <td>Reverse proxy — roteia /api/* para crm-api, demais rotas para frontend. Termina SSL via Certbot.</td>
+              <td>80, 443</td>
+            </tr>
+            <tr>
+              <td><strong>mysql</strong></td>
+              <td>MySQL 8.0</td>
+              <td>Persistência relacional — contatos, pipeline, mensagens, usuários, logs</td>
+              <td>3306 (interno)</td>
+            </tr>
+            <tr>
+              <td><strong>redis</strong></td>
+              <td>Redis 7</td>
+              <td>Cache de sessão, filas de mensagens (Laravel Queues) e pub/sub para webhooks WhatsApp</td>
+              <td>6379 (interno)</td>
+            </tr>
+            <tr>
+              <td><strong>evolution-api</strong></td>
+              <td>Evolution API v2 (Node.js)</td>
+              <td>Gerencia sessões WhatsApp (Baileys), recebe e envia mensagens, dispara webhooks para crm-api</td>
+              <td>8080 (interno)</td>
+            </tr>
+            <tr>
+              <td><strong>crm-worker</strong></td>
+              <td>Laravel Queue Worker (mesmo container crm-api ou separado)</td>
+              <td>Processa filas: webhooks WhatsApp recebidos, chamadas à IA, notificações internas</td>
+              <td>— (worker)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="subsection" style="margin-top:1.5rem">
+          <div class="subsection-title">5.1 Comunicação entre Containers</div>
+          <table class="doc-table">
+            <thead><tr><th>De</th><th>Para</th><th>Protocolo</th><th>Descrição</th></tr></thead>
+            <tbody>
+              <tr><td>nginx</td><td>crm-api</td><td>FastCGI/HTTP</td><td>Proxy de requisições /api/*</td></tr>
+              <tr><td>crm-frontend</td><td>crm-api</td><td>HTTPS REST</td><td>Chamadas de API do SPA</td></tr>
+              <tr><td>evolution-api</td><td>crm-api</td><td>HTTP Webhook</td><td>Notifica mensagens WhatsApp recebidas</td></tr>
+              <tr><td>crm-api</td><td>evolution-api</td><td>HTTP REST</td><td>Envia mensagens WhatsApp</td></tr>
+              <tr><td>crm-api</td><td>DeepSeek API</td><td>HTTPS REST</td><td>Requisições de completions de IA</td></tr>
+              <tr><td>crm-api / worker</td><td>redis</td><td>Redis protocol</td><td>Cache, filas e pub/sub</td></tr>
+              <tr><td>crm-api / worker</td><td>mysql</td><td>MySQL protocol</td><td>Leitura e escrita de dados</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. VIEW COMPONENTES -->
+    <div class="doc-section" id="s6">
+      <div class="section-num">6</div>
+      <div class="section-title">View — Componentes da API</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.6 · Nível C4-L3 · Container: crm-api</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>Componente</th><th>Camada</th><th>Responsabilidade</th></tr></thead>
+          <tbody>
+            <tr><td><strong>AuthModule</strong></td><td>HTTP / Middleware</td><td>Login, logout, refresh de token JWT, guards de role</td></tr>
+            <tr><td><strong>ContactModule</strong></td><td>Domain</td><td>CRUD de contatos, tags, importação CSV, segmentação</td></tr>
+            <tr><td><strong>PipelineModule</strong></td><td>Domain</td><td>Gestão de oportunidades, estágios, automações e notificações</td></tr>
+            <tr><td><strong>WhatsAppModule</strong></td><td>Integration</td><td>Recebe webhooks da Evolution API, envia mensagens, sincroniza contatos</td></tr>
+            <tr><td><strong>AIModule</strong></td><td>Integration</td><td>Orquestra chamadas ao DeepSeek, gerencia contexto da conversa, controla handoff</td></tr>
+            <tr><td><strong>ReportModule</strong></td><td>Domain</td><td>Agrega dados para dashboard e relatórios de funil</td></tr>
+            <tr><td><strong>NotificationModule</strong></td><td>Infrastructure</td><td>Notificações internas via broadcast (Laravel Echo / Redis)</td></tr>
+            <tr><td><strong>QueueModule</strong></td><td>Infrastructure</td><td>Define e despacha jobs: ProcessWhatsAppWebhook, CallAIResponse, SendNotification</td></tr>
+          </tbody>
+        </table>
+        <div class="info-box">A API segue a arquitetura em camadas: HTTP (Controllers/Routes) → Domain (Services/Models) → Infrastructure (Repositories/Integrations). Comunicação entre módulos ocorre via Service classes injetadas por DI do Laravel.</div>
+      </div>
+    </div>
+
+    <!-- 7. VIEW IMPLANTAÇÃO -->
+    <div class="doc-section" id="s7">
+      <div class="section-num">7</div>
+      <div class="section-title">View — Implantação</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.6 · Deployment View</div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title">7.1 Infraestrutura</div>
+          <table class="doc-table">
+            <thead><tr><th>Recurso</th><th>Especificação</th><th>Custo/mês</th></tr></thead>
+            <tbody>
+              <tr><td><strong>VPS Principal</strong></td><td>Hetzner CX31 — 4 vCPU, 8GB RAM, 80GB SSD NVMe, Ubuntu 24.04</td><td>~$20 USD</td></tr>
+              <tr><td><strong>Backup</strong></td><td>Hetzner Backup automático (snapshots diários, retenção 7 dias)</td><td>~$4 USD</td></tr>
+              <tr><td><strong>DNS / CDN</strong></td><td>Cloudflare Free — proxy, cache estático, DDoS básico</td><td>Gratuito</td></tr>
+              <tr><td><strong>SSL</strong></td><td>Let's Encrypt via Certbot (renovação automática)</td><td>Gratuito</td></tr>
+              <tr><td><strong>Domínio</strong></td><td>Registro.br (.com.br)</td><td>~R$ 4/mês</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="subsection">
+          <div class="subsection-title">7.2 Estrutura Docker Compose</div>
+          <div class="code-block">version: '3.8'
+services:
+  nginx:        # Reverse proxy + SSL termination
+  crm-api:      # Laravel 11 PHP-FPM
+  crm-worker:   # Laravel Queue Worker
+  crm-frontend: # Vue.js build estático (Nginx interno)
+  mysql:        # MySQL 8 — volume persistente
+  redis:        # Redis 7 — filas e cache
+  evolution-api: # Evolution API v2 — WhatsApp
+
+networks:
+  crm-network:  # Rede interna Docker (apenas nginx expõe portas externas)</div>
+        </div>
+        <div class="subsection">
+          <div class="subsection-title">7.3 Estratégia de Migração Futura</div>
+          <p>Caso o volume de mensagens WhatsApp comprometa os recursos do VPS principal, o container <code>evolution-api</code> pode ser movido para um VPS dedicado sem alterações no código. A única mudança necessária é atualizar a variável de ambiente <code>EVOLUTION_API_URL</code> na crm-api e ajustar as regras de rede.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. ADRs -->
+    <div class="doc-section" id="s8">
+      <div class="section-num">8</div>
+      <div class="section-title">Decisões Arquiteturais (ADRs)</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 42010:2011 §5.7 — Architecture decisions</div>
+      <div class="section-body">
+
+        <div class="subsection">
+          <div class="subsection-title">ADR-001 — VPS único com Docker Compose (vs. servidores separados)</div>
+          <table class="doc-table">
+            <tbody>
+              <tr><td style="width:120px;font-weight:600;color:var(--gray-600)">Status</td><td>Aceito</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Contexto</td><td>Projeto de baixo volume inicial (5 usuários), prazo de 2 meses, cliente sensível a custos de infraestrutura.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Decisão</td><td>Todos os containers em um único VPS Hetzner CX31 (~$20/mês), orquestrados por Docker Compose.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Consequências</td><td>Redução de custo de ~$9/mês (vs. VPS separado para Evolution API). Migração futura possível sem refatoração. Risco: contenção de recursos se volume de mensagens crescer muito.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">ADR-002 — Evolution API self-hosted (vs. Z-API ou 360Dialog)</div>
+          <table class="doc-table">
+            <tbody>
+              <tr><td style="width:120px;font-weight:600;color:var(--gray-600)">Status</td><td>Aceito</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Contexto</td><td>Necessidade de integração WhatsApp sem custo de licença recorrente e com controle total sobre as sessões.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Decisão</td><td>Evolution API v2 open source, self-hosted no mesmo VPS via Docker.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Consequências</td><td>Custo zero de licença. Suporte a multi-sessão nativo. Risco: não é a API oficial do Meta (Baileys), sujeita a bloqueios de conta em uso abusivo. Mitigação: limitar volume e respeitar boas práticas de uso.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">ADR-003 — DeepSeek V3.2 como provedor de IA inicial</div>
+          <table class="doc-table">
+            <tbody>
+              <tr><td style="width:120px;font-weight:600;color:var(--gray-600)">Status</td><td>Aceito</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Contexto</td><td>Necessidade de IA conversacional com custo mínimo para validação do produto no MVP.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Decisão</td><td>DeepSeek V3.2 ($0,28/M tokens input) como provedor inicial. Interface de IA encapsulada em AIModule com padrão Provider/Adapter para permitir troca futura.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Consequências</td><td>Custo estimado &lt;$15/mês para o volume inicial. Troca para GPT-4o ou Claude possível sem refatoração dos módulos de negócio. Risco: latência ligeiramente maior que OpenAI em horários de pico.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">ADR-004 — Arquitetura monolítica modular (vs. microserviços)</div>
+          <table class="doc-table">
+            <tbody>
+              <tr><td style="width:120px;font-weight:600;color:var(--gray-600)">Status</td><td>Aceito</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Contexto</td><td>Equipe de 1 desenvolvedor, prazo de 2 meses, baixo volume inicial.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Decisão</td><td>API Laravel única com módulos internos bem separados. Não microserviços.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Consequências</td><td>Desenvolvimento mais rápido, deploy mais simples. Refatoração para microserviços possível no futuro se escala exigir, graças à separação por módulos já adotada.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <span>ADD-AG-001 · v1.0.0 · ISO/IEC/IEEE 42010:2011</span>
+  <span>Matheus Fernandes Cunha — Monk Studio / Açaí Gurau · 2026</span>
+</footer>
+
+<script>
+  const links = document.querySelectorAll('.sidebar-link[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('.doc-section[id]').forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
