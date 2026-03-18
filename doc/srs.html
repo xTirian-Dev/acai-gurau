@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRS — Especificação de Requisitos · CRM Açaí Gurau</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="topbar-logo-icon">AG</div>
+    Açaí Gurau
+  </a>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-doc">SRS — Especificação de Requisitos</span>
+  <div class="topbar-right">
+    <span class="topbar-badge srs">ISO/IEC/IEEE 29148:2018</span>
+    <a href="index.html" class="topbar-home">← Índice</a>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Documento</div>
+      <a href="#s1" class="sidebar-link active"><span class="sidebar-link-num">1</span> Introdução</a>
+      <a href="#s2" class="sidebar-link"><span class="sidebar-link-num">2</span> Partes Interessadas</a>
+      <a href="#s3" class="sidebar-link"><span class="sidebar-link-num">3</span> Visão Geral do Sistema</a>
+      <a href="#s4" class="sidebar-link"><span class="sidebar-link-num">4</span> Requisitos Funcionais</a>
+      <a href="#s5" class="sidebar-link"><span class="sidebar-link-num">5</span> Requisitos Não-Funcionais</a>
+      <a href="#s6" class="sidebar-link"><span class="sidebar-link-num">6</span> Restrições</a>
+      <a href="#s7" class="sidebar-link"><span class="sidebar-link-num">7</span> Critérios de Aceite</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Outros documentos</div>
+      <a href="add.html" class="sidebar-link"><span class="sidebar-link-num" style="color:var(--green)">ADD</span> Arquitetura</a>
+      <a href="sdd.html" class="sidebar-link"><span class="sidebar-link-num" style="color:var(--amber)">SDD</span> Design</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <div class="doc-header">
+      <div class="doc-norm">ISO/IEC/IEEE 29148:2018 — Systems and software engineering — Life cycle processes — Requirements engineering</div>
+      <h1 class="doc-title">Especificação de Requisitos de Software</h1>
+      <p class="doc-subtitle">Define os requisitos funcionais e não-funcionais do sistema CRM com automação de WhatsApp e IA conversacional para a Açaí Gurau, estabelecendo o contrato técnico entre Monk Studio e o engenheiro responsável.</p>
+      <div class="doc-meta-row">
+        <div class="doc-meta-item"><span class="doc-meta-label">Documento</span><span class="doc-meta-val">SRS-AG-001</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.0.0</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">18 de Março de 2026</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Autor</span><span class="doc-meta-val">Matheus Fernandes Cunha</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Contratante</span><span class="doc-meta-val">Monk Studio</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Status</span><span class="doc-meta-val">Emitido</span></div>
+      </div>
+    </div>
+
+    <!-- 1. INTRODUÇÃO -->
+    <div class="doc-section" id="s1">
+      <div class="section-num">1</div>
+      <div class="section-title">Introdução</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §6.2</div>
+      <div class="section-body">
+
+        <div class="subsection">
+          <div class="subsection-title">1.1 Propósito</div>
+          <p>Este documento especifica os requisitos do sistema CRM com automação de WhatsApp e IA conversacional a ser desenvolvido para a Açaí Gurau, empresa fabricante e distribuidora de sorvetes e açaí no modelo B2B. O documento serve como base contratual entre a Monk Studio (contratante) e Matheus Fernandes Cunha (engenheiro responsável), e como referência para verificação e validação das entregas.</p>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">1.2 Escopo</div>
+          <p>O sistema abrange três domínios funcionais principais: gestão de relacionamento com clientes B2B (distribuidores, revendas e pontos de venda), automação de comunicação via WhatsApp Business e atendimento inteligente por IA conversacional. O sistema não inclui gestão financeira, controle de estoque ou funcionalidades de e-commerce.</p>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">1.3 Definições e Siglas</div>
+          <table class="doc-table">
+            <thead><tr><th>Termo</th><th>Definição</th></tr></thead>
+            <tbody>
+              <tr><td><code>CRM</code></td><td>Customer Relationship Management — sistema de gestão de relacionamento com clientes</td></tr>
+              <tr><td><code>B2B</code></td><td>Business-to-Business — modelo de negócio entre empresas (Açaí Gurau → distribuidores/revendas)</td></tr>
+              <tr><td><code>Lead</code></td><td>Prospect ou contato com potencial de se tornar cliente da Açaí Gurau</td></tr>
+              <tr><td><code>Pipeline</code></td><td>Funil de vendas com estágios progressivos de negociação</td></tr>
+              <tr><td><code>Handoff</code></td><td>Transferência de atendimento da IA para um agente humano</td></tr>
+              <tr><td><code>RAG</code></td><td>Retrieval-Augmented Generation — técnica de IA que combina busca em base de conhecimento com geração de texto</td></tr>
+              <tr><td><code>PDV</code></td><td>Ponto de Venda — estabelecimento que revende os produtos da Açaí Gurau</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">1.4 Referências Normativas</div>
+          <ul class="doc-list">
+            <li>ISO/IEC/IEEE 29148:2018 — Requirements engineering</li>
+            <li>ISO/IEC/IEEE 42010:2011 — Architecture description (ver ADD-AG-001)</li>
+            <li>ISO/IEC/IEEE 1016:2016 — Software design descriptions (ver SDD-AG-001)</li>
+            <li>ISO/IEC 25010:2023 — Systems and software quality models</li>
+            <li>LGPD — Lei Geral de Proteção de Dados Pessoais (Lei 13.709/2018)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PARTES INTERESSADAS -->
+    <div class="doc-section" id="s2">
+      <div class="section-num">2</div>
+      <div class="section-title">Partes Interessadas</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §6.3 — Stakeholder requirements</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>Parte</th><th>Papel</th><th>Interesse no sistema</th><th>Nível de influência</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Monk Studio</strong></td>
+              <td>Contratante / Agência</td>
+              <td>Entrega de solução técnica para seu cliente; qualidade e prazo do desenvolvimento</td>
+              <td>Alto</td>
+            </tr>
+            <tr>
+              <td><strong>Açaí Gurau</strong></td>
+              <td>Usuário final / Proprietário</td>
+              <td>Gestão centralizada de clientes B2B, automação de atendimento e redução de churn</td>
+              <td>Alto</td>
+            </tr>
+            <tr>
+              <td><strong>Time de Marketing</strong></td>
+              <td>Operadores do sistema</td>
+              <td>Ferramentas eficientes para gestão de leads, follow-up e comunicação via WhatsApp</td>
+              <td>Médio</td>
+            </tr>
+            <tr>
+              <td><strong>Clientes B2B da Açaí Gurau</strong></td>
+              <td>Usuários indiretos</td>
+              <td>Atendimento ágil e personalizado via WhatsApp</td>
+              <td>Baixo</td>
+            </tr>
+            <tr>
+              <td><strong>Matheus F. Cunha</strong></td>
+              <td>Engenheiro responsável</td>
+              <td>Clareza de requisitos para desenvolvimento dentro do prazo e escopo acordados</td>
+              <td>Alto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. VISÃO GERAL -->
+    <div class="doc-section" id="s3">
+      <div class="section-num">3</div>
+      <div class="section-title">Visão Geral do Sistema</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §6.4</div>
+      <div class="section-body">
+
+        <div class="subsection">
+          <div class="subsection-title">3.1 Contexto de Negócio</div>
+          <p>A Açaí Gurau opera no modelo B2B, comercializando sorvetes e açaí para distribuidores, revendas e PDVs. A gestão atual de relacionamento com esses clientes é descentralizada, sem histórico unificado de comunicações e sem automação de follow-up. O sistema visa centralizar e automatizar esse processo, com foco no time de marketing que opera a comunicação comercial.</p>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">3.2 Funcionalidades Principais</div>
+          <table class="doc-table">
+            <thead><tr><th>Módulo</th><th>Descrição</th><th>Fase</th></tr></thead>
+            <tbody>
+              <tr><td>Gestão de Contatos</td><td>CRUD de clientes B2B com perfil, histórico e segmentação por tipo (distribuidor, revenda, PDV)</td><td>MVP</td></tr>
+              <tr><td>Pipeline de Vendas</td><td>Kanban com estágios de negociação, atribuição de responsável e automação de avanço</td><td>MVP + Fase 2</td></tr>
+              <tr><td>WhatsApp Business</td><td>Recebimento, envio e histórico de mensagens integrado ao perfil do contato</td><td>MVP</td></tr>
+              <tr><td>IA Conversacional</td><td>Atendimento automatizado via DeepSeek V3.2 com handoff para humano</td><td>MVP + Fase 2</td></tr>
+              <tr><td>Relatórios e KPIs</td><td>Dashboard com métricas de leads, conversões e atividade do time</td><td>Fase 2</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">3.3 Limites do Sistema</div>
+          <div class="info-box">O sistema não gerencia pedidos, estoque, faturamento ou logística. Integração com sistemas ERP ou financeiros está fora do escopo desta versão.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. REQUISITOS FUNCIONAIS -->
+    <div class="doc-section" id="s4">
+      <div class="section-num">4</div>
+      <div class="section-title">Requisitos Funcionais</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §5.2.5 — Functional requirements</div>
+      <div class="section-body">
+
+        <div class="subsection">
+          <div class="subsection-title">4.1 Autenticação e Controle de Acesso</div>
+          <table class="doc-table">
+            <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+            <tbody>
+              <tr><td><span class="req-id">RF-AUTH-01</span></td><td>O sistema deve autenticar usuários via e-mail e senha com token JWT</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-AUTH-02</span></td><td>O sistema deve suportar roles: Administrador, Agente e Visualizador</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-AUTH-03</span></td><td>Sessões devem expirar após 8 horas de inatividade</td><td><span class="priority p-media">Média</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">4.2 Gestão de Contatos e Leads</div>
+          <table class="doc-table">
+            <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+            <tbody>
+              <tr><td><span class="req-id">RF-CRM-01</span></td><td>O sistema deve permitir criar, editar, visualizar e arquivar contatos B2B (distribuidores, revendas, PDVs)</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-CRM-02</span></td><td>Cada contato deve ter campos: razão social, CNPJ, telefone WhatsApp, responsável, segmento, tags e notas</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-CRM-03</span></td><td>O sistema deve exibir o histórico completo de interações (mensagens, anotações, mudanças de estágio) por contato</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-CRM-04</span></td><td>O sistema deve suportar segmentação de contatos por tags e tipo</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-CRM-05</span></td><td>O sistema deve permitir importação de contatos via arquivo CSV</td><td><span class="priority p-baixa">Baixa</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">4.3 Pipeline de Vendas</div>
+          <table class="doc-table">
+            <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+            <tbody>
+              <tr><td><span class="req-id">RF-PIPE-01</span></td><td>O sistema deve exibir um quadro Kanban com as oportunidades organizadas por estágio</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-PIPE-02</span></td><td>Estágios padrão: Prospecção, Contato Realizado, Proposta Enviada, Negociação, Fechado (Ganho/Perdido)</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-PIPE-03</span></td><td>O sistema deve permitir criar estágios customizados e reordenar por drag-and-drop (Fase 2)</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-PIPE-04</span></td><td>O sistema deve enviar notificação interna quando uma oportunidade ficar sem movimentação por N dias configurável</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-PIPE-05</span></td><td>O sistema deve permitir definir regras de automação para avançar estágios com base em eventos (Fase 2)</td><td><span class="priority p-baixa">Baixa</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">4.4 Integração WhatsApp</div>
+          <table class="doc-table">
+            <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+            <tbody>
+              <tr><td><span class="req-id">RF-WA-01</span></td><td>O sistema deve receber e exibir mensagens de WhatsApp em tempo real vinculadas ao contato correspondente</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-02</span></td><td>O sistema deve permitir envio de mensagens de texto via WhatsApp a partir da interface do CRM</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-03</span></td><td>Mensagens recebidas de números não cadastrados devem criar automaticamente um lead no sistema</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-04</span></td><td>O sistema deve suportar múltiplas sessões WhatsApp simultâneas (Fase 2)</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-05</span></td><td>O histórico de mensagens WhatsApp deve ser armazenado e associado ao contato no CRM</td><td><span class="priority p-alta">Alta</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">4.5 IA Conversacional</div>
+          <table class="doc-table">
+            <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+            <tbody>
+              <tr><td><span class="req-id">RF-IA-01</span></td><td>O sistema deve responder automaticamente mensagens via DeepSeek V3.2, com contexto do contato (segmento, histórico, estágio)</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-IA-02</span></td><td>O sistema deve identificar intenção de compra e acionar notificação ao agente responsável</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-IA-03</span></td><td>O agente deve poder assumir o atendimento (handoff) a qualquer momento, pausando a IA para aquele contato</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-IA-04</span></td><td>O sistema deve manter memória da conversa usando contexto acumulado (Fase 2 — RAG)</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-IA-05</span></td><td>O sistema deve permitir configurar o comportamento do bot por canal/segmento (Fase 2)</td><td><span class="priority p-baixa">Baixa</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">4.6 Relatórios e Dashboards</div>
+          <table class="doc-table">
+            <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+            <tbody>
+              <tr><td><span class="req-id">RF-REL-01</span></td><td>O sistema deve exibir dashboard com: total de leads, taxa de conversão, mensagens enviadas/recebidas e oportunidades por estágio</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-REL-02</span></td><td>O sistema deve exibir relatório de funil com taxa de avanço entre estágios</td><td><span class="priority p-media">Média</span></td></tr>
+              <tr><td><span class="req-id">RF-REL-03</span></td><td>Os dados do dashboard devem ser filtráveis por período (7d, 30d, 90d, personalizado)</td><td><span class="priority p-baixa">Baixa</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. REQUISITOS NÃO-FUNCIONAIS -->
+    <div class="doc-section" id="s5">
+      <div class="section-num">5</div>
+      <div class="section-title">Requisitos Não-Funcionais</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §5.2.6 — ISO/IEC 25010:2023 quality model</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>ID</th><th>Categoria (ISO 25010)</th><th>Requisito</th><th>Métrica</th></tr></thead>
+          <tbody>
+            <tr><td><span class="req-id">RNF-PER-01</span></td><td>Performance</td><td>Tempo de resposta da API para operações CRUD</td><td>&lt; 300ms (p95)</td></tr>
+            <tr><td><span class="req-id">RNF-PER-02</span></td><td>Performance</td><td>Entrega de mensagem WhatsApp recebida na interface</td><td>&lt; 2s</td></tr>
+            <tr><td><span class="req-id">RNF-PER-03</span></td><td>Performance</td><td>Tempo de resposta da IA ao usuário final</td><td>&lt; 5s</td></tr>
+            <tr><td><span class="req-id">RNF-SEG-01</span></td><td>Segurança</td><td>Todas as comunicações devem usar TLS 1.2+</td><td>100% HTTPS</td></tr>
+            <tr><td><span class="req-id">RNF-SEG-02</span></td><td>Segurança</td><td>Dados sensíveis (tokens, senhas) devem ser armazenados com hash bcrypt ou criptografia AES-256</td><td>Auditoria no deploy</td></tr>
+            <tr><td><span class="req-id">RNF-SEG-03</span></td><td>Segurança</td><td>O sistema deve estar em conformidade com a LGPD para dados de clientes B2B</td><td>Revisão legal</td></tr>
+            <tr><td><span class="req-id">RNF-DIS-01</span></td><td>Confiabilidade</td><td>Disponibilidade do sistema em horário comercial</td><td>&ge; 99% mensal</td></tr>
+            <tr><td><span class="req-id">RNF-MAN-01</span></td><td>Manutenibilidade</td><td>Cobertura de testes unitários nos módulos críticos (auth, pipeline, WhatsApp)</td><td>&ge; 60%</td></tr>
+            <tr><td><span class="req-id">RNF-USA-01</span></td><td>Usabilidade</td><td>Interface responsiva compatível com desktop e tablets</td><td>Breakpoint 768px+</td></tr>
+            <tr><td><span class="req-id">RNF-POR-01</span></td><td>Portabilidade</td><td>O sistema deve ser implantável via Docker Compose em qualquer VPS Linux</td><td>Ambiente único</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 6. RESTRIÇÕES -->
+    <div class="doc-section" id="s6">
+      <div class="section-num">6</div>
+      <div class="section-title">Restrições</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §5.2.7 — Constraints</div>
+      <div class="section-body">
+        <table class="doc-table">
+          <thead><tr><th>Tipo</th><th>Restrição</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Prazo</strong></td><td>MVP deve ser entregue em 30 dias corridos. Entrega final em 60 dias corridos a partir do início.</td></tr>
+            <tr><td><strong>Equipe</strong></td><td>Desenvolvimento realizado por um único engenheiro sênior (Matheus F. Cunha).</td></tr>
+            <tr><td><strong>Tecnologia</strong></td><td>Backend obrigatoriamente em Laravel 11. Frontend em Vue.js 3. WhatsApp via Evolution API (self-hosted).</td></tr>
+            <tr><td><strong>Infraestrutura</strong></td><td>Implantação em VPS único com Docker Compose. Provedor: Hetzner. Custo máximo de infraestrutura: ~$25 USD/mês.</td></tr>
+            <tr><td><strong>IA</strong></td><td>Provedor de IA inicial: DeepSeek V3.2. Arquitetura deve permitir troca de provedor sem refatoração de módulos de negócio.</td></tr>
+            <tr><td><strong>Legal</strong></td><td>Dados de clientes B2B devem ser tratados conforme LGPD. Nenhum dado pessoal deve ser enviado para provedores de IA sem anonimização ou consentimento.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7. CRITÉRIOS DE ACEITE -->
+    <div class="doc-section" id="s7">
+      <div class="section-num">7</div>
+      <div class="section-title">Critérios de Aceite</div>
+      <div class="section-norm-ref">Ref. ISO/IEC/IEEE 29148:2018 §5.2.8 — Acceptance criteria</div>
+      <div class="section-body">
+
+        <div class="subsection">
+          <div class="subsection-title">7.1 Fase 1 — MVP (Semana 4)</div>
+          <ul class="doc-list">
+            <li>Autenticação funcional com roles Administrador e Agente</li>
+            <li>CRUD completo de contatos com campos obrigatórios (RF-CRM-01, RF-CRM-02)</li>
+            <li>Kanban de pipeline com estágios fixos padrão (RF-PIPE-01, RF-PIPE-02)</li>
+            <li>Recebimento e envio de mensagens WhatsApp em tempo real (RF-WA-01, RF-WA-02)</li>
+            <li>Criação automática de lead para número não cadastrado (RF-WA-03)</li>
+            <li>IA respondendo automaticamente com contexto básico do contato (RF-IA-01)</li>
+            <li>Handoff manual IA → agente funcionando (RF-IA-03)</li>
+          </ul>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">7.2 Fase 2 — Entrega Final (Semana 8)</div>
+          <ul class="doc-list">
+            <li>Estágios customizáveis no pipeline (RF-PIPE-03)</li>
+            <li>Automação de notificação por inatividade (RF-PIPE-04)</li>
+            <li>Multi-sessão WhatsApp ativa (RF-WA-04)</li>
+            <li>Memória de conversa com RAG implementada (RF-IA-04)</li>
+            <li>Dashboard com KPIs e filtros por período (RF-REL-01, RF-REL-03)</li>
+            <li>Todos os RNFs verificados e documentados no ambiente de produção</li>
+            <li>Sessão de treinamento realizada com o time da Açaí Gurau (mín. 2h)</li>
+          </ul>
+        </div>
+
+        <div class="warn-box">Os critérios de aceite são a base para liberação de cada parcela de pagamento conforme contrato firmado entre Monk Studio e o engenheiro responsável.</div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <span>SRS-AG-001 · v1.0.0 · ISO/IEC/IEEE 29148:2018</span>
+  <span>Matheus Fernandes Cunha — Monk Studio / Açaí Gurau · 2026</span>
+</footer>
+
+<script>
+  const links = document.querySelectorAll('.sidebar-link[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('.doc-section[id]').forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
