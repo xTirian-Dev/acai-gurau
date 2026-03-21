@@ -53,11 +53,12 @@
       <p class="doc-subtitle">Define os requisitos funcionais e não-funcionais do sistema CRM com automação de WhatsApp e IA conversacional para a Açaí Gurau, estabelecendo o contrato técnico entre Monk Studio e o engenheiro responsável.</p>
       <div class="doc-meta-row">
         <div class="doc-meta-item"><span class="doc-meta-label">Documento</span><span class="doc-meta-val">SRS-AG-001</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.0.0</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.1.0</span></div>
         <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">18 de Março de 2026</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Atualizado em</span><span class="doc-meta-val">21 de Março de 2026</span></div>
         <div class="doc-meta-item"><span class="doc-meta-label">Autor</span><span class="doc-meta-val">Matheus Fernandes Cunha</span></div>
         <div class="doc-meta-item"><span class="doc-meta-label">Contratante</span><span class="doc-meta-val">Monk Studio</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Status</span><span class="doc-meta-val">Emitido</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-val" style="background:var(--amber-50,#fffbeb);color:var(--amber,#d97706);border:1px solid var(--amber,#d97706);padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">Revisado</span></div>
       </div>
     </div>
 
@@ -90,6 +91,9 @@
               <tr><td><code>Handoff</code></td><td>Transferência de atendimento da IA para um agente humano</td></tr>
               <tr><td><code>RAG</code></td><td>Retrieval-Augmented Generation — técnica de IA que combina busca em base de conhecimento com geração de texto</td></tr>
               <tr><td><code>PDV</code></td><td>Ponto de Venda — estabelecimento que revende os produtos da Açaí Gurau</td></tr>
+              <tr><td><code>Conversation</code></td><td>Sessão de atendimento vinculada a um contato, com status (bot/waiting/active/closed) e operador responsável. Uma conversa pode ter múltiplas sessões de IA ao longo do tempo.</td></tr>
+              <tr><td><code>Broadcast</code></td><td>Disparo de mensagem em massa para um segmento de contatos via WhatsApp</td></tr>
+              <tr><td><code>Template</code></td><td>Mensagem comercial pré-cadastrada pelo administrador, usada como abertura automática pela IA</td></tr>
             </tbody>
           </table>
         </div>
@@ -104,6 +108,18 @@
             <li>LGPD — Lei Geral de Proteção de Dados Pessoais (Lei 13.709/2018)</li>
           </ul>
         </div>
+
+        <div class="subsection">
+          <div class="subsection-title">1.5 Histórico de Revisões</div>
+          <table class="doc-table">
+            <thead><tr><th>Versão</th><th>Data</th><th>Alterações</th></tr></thead>
+            <tbody>
+              <tr><td><code>1.0.0</code></td><td>18/03/2026</td><td>Emissão inicial</td></tr>
+              <tr><td><code>1.1.0</code></td><td>21/03/2026</td><td>Adicionados RF-WA-06, RF-WA-07, RF-WA-08, RF-WA-09. Definições de Conversation, Broadcast e Template. Critérios de aceite atualizados.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
 
@@ -170,8 +186,10 @@
             <tbody>
               <tr><td>Gestão de Contatos</td><td>CRUD de clientes B2B com perfil, histórico e segmentação por tipo (distribuidor, revenda, PDV)</td><td>MVP</td></tr>
               <tr><td>Pipeline de Vendas</td><td>Kanban com estágios de negociação, atribuição de responsável e automação de avanço</td><td>MVP + Fase 2</td></tr>
-              <tr><td>WhatsApp Business</td><td>Recebimento, envio e histórico de mensagens integrado ao perfil do contato</td><td>MVP</td></tr>
-              <tr><td>IA Conversacional</td><td>Atendimento automatizado via DeepSeek V3.2 com handoff para humano</td><td>MVP + Fase 2</td></tr>
+              <tr><td>WhatsApp Business</td><td>Recebimento, envio, histórico e abertura proativa de conversas integrado ao perfil do contato</td><td>MVP</td></tr>
+              <tr><td>IA Conversacional</td><td>Atendimento automatizado via DeepSeek V3.2 com handoff para humano e timer de janela de 20 minutos</td><td>MVP + Fase 2</td></tr>
+              <tr><td>Templates Comerciais</td><td>Mensagens de abertura pré-cadastradas para uso automático pela IA no primeiro contato</td><td>MVP</td></tr>
+              <tr><td>Broadcast</td><td>Disparo em massa para segmentos de contatos com queue e respeito ao horário comercial</td><td>Fase 2</td></tr>
               <tr><td>Relatórios e KPIs</td><td>Dashboard com métricas de leads, conversões e atividade do time</td><td>Fase 2</td></tr>
             </tbody>
           </table>
@@ -241,6 +259,10 @@
               <tr><td><span class="req-id">RF-WA-03</span></td><td>Mensagens recebidas de números não cadastrados devem criar automaticamente um lead no sistema</td><td><span class="priority p-alta">Alta</span></td></tr>
               <tr><td><span class="req-id">RF-WA-04</span></td><td>O sistema deve suportar múltiplas sessões WhatsApp simultâneas (Fase 2)</td><td><span class="priority p-media">Média</span></td></tr>
               <tr><td><span class="req-id">RF-WA-05</span></td><td>O histórico de mensagens WhatsApp deve ser armazenado e associado ao contato no CRM</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-06</span></td><td>O sistema deve permitir iniciar uma conversa WhatsApp a partir de um contato cadastrado manualmente, com IA ativa por padrão e janela de 20 minutos para handoff pelo agente antes do primeiro disparo automático</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-07</span></td><td>O sistema deve processar disparos de abertura de conversa via queue com intervalos aleatórios de 30 a 90 segundos entre mensagens, respeitando o horário comercial configurado. Disparos agendados fora do horário comercial devem ser reagendados para o próximo dia útil às 9h.</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-08</span></td><td>O sistema deve permitir que o administrador cadastre templates de mensagem comercial para uso como abertura automática pela IA no primeiro contato</td><td><span class="priority p-alta">Alta</span></td></tr>
+              <tr><td><span class="req-id">RF-WA-09</span></td><td>O sistema deve permitir envio de mensagem em massa (broadcast) para um segmento de contatos selecionado, com queue de disparo e controle de rate limit (Fase 2)</td><td><span class="priority p-media">Média</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -313,6 +335,7 @@
             <tr><td><strong>Infraestrutura</strong></td><td>Implantação em VPS único com Docker Compose. Provedor: Hetzner. Custo máximo de infraestrutura: ~$25 USD/mês.</td></tr>
             <tr><td><strong>IA</strong></td><td>Provedor de IA inicial: DeepSeek V3.2. Arquitetura deve permitir troca de provedor sem refatoração de módulos de negócio.</td></tr>
             <tr><td><strong>Legal</strong></td><td>Dados de clientes B2B devem ser tratados conforme LGPD. Nenhum dado pessoal deve ser enviado para provedores de IA sem anonimização ou consentimento.</td></tr>
+            <tr><td><strong>WhatsApp</strong></td><td>Disparos proativos via Evolution API (Baileys) não utilizam templates aprovados pelo Meta. O volume de disparos deve ser controlado para mitigar risco de banimento de número.</td></tr>
           </tbody>
         </table>
       </div>
@@ -333,6 +356,10 @@
             <li>Kanban de pipeline com estágios fixos padrão (RF-PIPE-01, RF-PIPE-02)</li>
             <li>Recebimento e envio de mensagens WhatsApp em tempo real (RF-WA-01, RF-WA-02)</li>
             <li>Criação automática de lead para número não cadastrado (RF-WA-03)</li>
+            <li>Abertura proativa de conversa a partir de contato cadastrado com IA ativa e timer de 20min (RF-WA-06)</li>
+            <li>Queue de disparo com intervalos aleatórios e respeito ao horário comercial (RF-WA-07)</li>
+            <li>Templates de mensagem comercial cadastráveis pelo admin (RF-WA-08)</li>
+            <li>Visibilidade de disparos agendados na interface do agente (RF-WA-07)</li>
             <li>IA respondendo automaticamente com contexto básico do contato (RF-IA-01)</li>
             <li>Handoff manual IA → agente funcionando (RF-IA-03)</li>
           </ul>
@@ -344,6 +371,7 @@
             <li>Estágios customizáveis no pipeline (RF-PIPE-03)</li>
             <li>Automação de notificação por inatividade (RF-PIPE-04)</li>
             <li>Multi-sessão WhatsApp ativa (RF-WA-04)</li>
+            <li>Broadcast para segmentos de contatos com queue e rate limit (RF-WA-09)</li>
             <li>Memória de conversa com RAG implementada (RF-IA-04)</li>
             <li>Dashboard com KPIs e filtros por período (RF-REL-01, RF-REL-03)</li>
             <li>Todos os RNFs verificados e documentados no ambiente de produção</li>
@@ -360,7 +388,7 @@
 </div>
 
 <footer>
-  <span>SRS-AG-001 · v1.0.0 · ISO/IEC/IEEE 29148:2018</span>
+  <span>SRS-AG-001 · v1.1.0 · ISO/IEC/IEEE 29148:2018</span>
   <span>Matheus Fernandes Cunha — Monk Studio / Açaí Gurau · 2026</span>
 </footer>
 

@@ -51,10 +51,11 @@
       <p class="doc-subtitle">Detalha o design interno do sistema CRM Açaí Gurau: modelo de dados, contratos de API, fluxos de integração, estrutura do frontend e padrões de implementação adotados.</p>
       <div class="doc-meta-row">
         <div class="doc-meta-item"><span class="doc-meta-label">Documento</span><span class="doc-meta-val">SDD-AG-001</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.0.0</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">18 de Março de 2026</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.1.0</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">21 de Março de 2026</span></div>
         <div class="doc-meta-item"><span class="doc-meta-label">Autor</span><span class="doc-meta-val">Matheus Fernandes Cunha</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Refs</span><span class="doc-meta-val">SRS-AG-001 · ADD-AG-001</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Refs</span><span class="doc-meta-val">SRS-AG-001 v1.1.0 · ADD-AG-001</span></div>
+        <div class="doc-meta-val" style="background:var(--amber-50,#fffbeb);color:var(--amber,#d97706);border:1px solid var(--amber,#d97706);padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">Revisado</div>
       </div>
     </div>
 
@@ -65,6 +66,17 @@
       <div class="section-norm-ref">Ref. ISO/IEC/IEEE 1016:2016 §5 — SDD content</div>
       <div class="section-body">
         <p>Este documento descreve as decisões de design do sistema CRM Açaí Gurau, refinando a arquitetura definida no ADD-AG-001. Cobre o modelo de dados relacional, o contrato das principais rotas da API REST, os fluxos de integração WhatsApp e IA, a estrutura do frontend Vue.js e os padrões de código adotados. Serve como guia de implementação para o engenheiro responsável e como referência de manutenção futura.</p>
+
+        <div class="subsection" style="margin-top:1.5rem">
+          <div class="subsection-title">1.1 Histórico de Revisões</div>
+          <table class="doc-table">
+            <thead><tr><th>Versão</th><th>Data</th><th>Alterações</th></tr></thead>
+            <tbody>
+              <tr><td><code>1.0.0</code></td><td>18/03/2026</td><td>Emissão inicial</td></tr>
+              <tr><td><code>1.1.0</code></td><td>21/03/2026</td><td>Modelo de dados corrigido e expandido: entidade <code>conversations</code> adicionada, <code>messages</code> com <code>conversation_id</code>, <code>ai_sessions</code> referenciando <code>conversation_id</code>, <code>users</code> com <code>is_online</code> e <code>last_seen_at</code>, <code>activity_logs</code> com <code>user_id</code>. Novos fluxos: abertura proativa de conversa, queue com intervalos aleatórios, templates comerciais. Novas rotas: conversations, scheduled, templates. Stores e roteamento frontend atualizados.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -76,14 +88,18 @@
       <div class="section-body">
         <div class="subsection">
           <div class="subsection-title">2.1 Estrutura da API (Laravel)</div>
-          <div class="code-block">crm-api/
+          <pre class="code-block">crm-api/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/         # Endpoints REST por módulo
 │   │   └── Middleware/          # Auth, Role, RateLimit
 │   ├── Models/                  # Eloquent models
 │   ├── Services/                # Lógica de negócio (ContactService, AIService...)
-│   ├── Jobs/                    # Queue jobs (ProcessWebhook, CallAI...)
+│   ├── Jobs/                    # Queue jobs
+│   │   ├── ProcessWhatsAppWebhook.php
+│   │   ├── CallAIResponse.php
+│   │   ├── ScheduleFirstMessage.php  # Abertura proativa com timer 20min
+│   │   └── SendNotification.php
 │   ├── Events/ + Listeners/     # Eventos de domínio
 │   └── Integrations/
 │       ├── EvolutionApiClient.php
@@ -95,20 +111,21 @@
 │   └── seeders/
 ├── routes/
 │   └── api.php                  # Versionado: /api/v1/...
-└── docker/</div>
+└── docker/</pre>
         </div>
         <div class="subsection">
           <div class="subsection-title">2.2 Estrutura do Frontend (Vue.js)</div>
           <div class="code-block">crm-frontend/
 ├── src/
-│   ├── views/                   # Páginas: Contacts, Pipeline, Chat, Reports
+│   ├── views/                   # Páginas: Contacts, Pipeline, Chat, Reports, Settings
 │   ├── components/              # Componentes reutilizáveis
 │   ├── stores/                  # Pinia stores por domínio
 │   │   ├── contacts.store.ts
 │   │   ├── pipeline.store.ts
 │   │   ├── chat.store.ts
+│   │   ├── scheduled.store.ts   # Disparos agendados visíveis ao agente
 │   │   └── auth.store.ts
-│   ├── composables/             # useWhatsApp, useAI, usePipeline
+│   ├── composables/             # useWhatsApp, useAI, usePipeline, useScheduled
 │   ├── services/                # Camada de API (axios)
 │   └── router/                  # Vue Router com guards de role
 └── public/</div>
@@ -130,13 +147,13 @@
             <tbody>
               <tr>
                 <td><code>users</code></td>
-                <td>id, name, email, password, role (admin|agent|viewer), active</td>
-                <td>hasMany contacts (assigned), hasMany pipeline_items</td>
+                <td>id, name, email, password, role (admin|agent|viewer), is_online, last_seen_at</td>
+                <td>hasMany contacts (assigned), hasMany pipeline_items, hasMany conversations (assigned), hasMany activity_logs</td>
               </tr>
               <tr>
                 <td><code>contacts</code></td>
-                <td>id, company_name, cnpj, phone_whatsapp, segment (distributor|resale|pdv), assigned_user_id, stage_id, notes</td>
-                <td>belongsTo user, hasMany messages, hasMany pipeline_items, hasMany tags</td>
+                <td>id, company_name, cnpj, phone_whatsapp, segment (distributor|resale|pdv), assigned_user_id, stage_id, notes, active, deleted_at</td>
+                <td>belongsTo user, belongsTo pipeline_stage, hasMany messages, hasMany pipeline_items, hasMany conversations, hasMany activity_logs, belongsToMany tags</td>
               </tr>
               <tr>
                 <td><code>tags</code></td>
@@ -146,27 +163,32 @@
               <tr>
                 <td><code>pipeline_stages</code></td>
                 <td>id, name, order, is_default, is_closed, is_won</td>
-                <td>hasMany pipeline_items</td>
+                <td>hasMany contacts, hasMany pipeline_items</td>
               </tr>
               <tr>
                 <td><code>pipeline_items</code></td>
                 <td>id, contact_id, stage_id, assigned_user_id, title, value, last_moved_at</td>
-                <td>belongsTo contact, belongsTo stage, belongsTo user</td>
+                <td>belongsTo contact, belongsTo pipeline_stage, belongsTo user</td>
+              </tr>
+              <tr>
+                <td><code>conversations</code></td>
+                <td>id, contact_id, assigned_user_id, status (bot|waiting|active|closed), assigned_at, closed_at</td>
+                <td>belongsTo contact, belongsTo user, hasMany messages, hasMany ai_sessions</td>
               </tr>
               <tr>
                 <td><code>messages</code></td>
-                <td>id, contact_id, direction (in|out), channel (whatsapp), content, type (text|media), ai_generated (bool), read_at, created_at</td>
-                <td>belongsTo contact</td>
+                <td>id, contact_id, conversation_id (nullable), direction (in|out), channel (whatsapp), content, type (text|media), ai_generated (bool), read_at, created_at</td>
+                <td>belongsTo contact, belongsTo conversation. Exibição por contact_id (histórico unificado); filtro opcional por conversation_id.</td>
               </tr>
               <tr>
                 <td><code>ai_sessions</code></td>
-                <td>id, contact_id, status (active|paused|closed), context_json, token_count, provider</td>
-                <td>belongsTo contact</td>
+                <td>id, conversation_id, status (active|pause|closed), context_json, token_count, provider (deepseek|claude|chatgpt|gemini)</td>
+                <td>belongsTo conversation. Uma conversa pode ter múltiplas sessões de IA ao longo do tempo (sem unique constraint).</td>
               </tr>
               <tr>
                 <td><code>activity_logs</code></td>
-                <td>id, contact_id, user_id, type, description, meta_json, created_at</td>
-                <td>Registro imutável de todas as ações</td>
+                <td>id, contact_id, user_id (nullable), type, description, meta_json, created_at</td>
+                <td>Registro imutável de todas as ações. belongsTo contact, belongsTo user.</td>
               </tr>
             </tbody>
           </table>
@@ -176,10 +198,22 @@
           <div class="subsection-title">3.2 Índices e Performance</div>
           <ul class="doc-list">
             <li><code>contacts.phone_whatsapp</code> — índice único, usado para lookup ao receber mensagens</li>
-            <li><code>messages.contact_id + created_at</code> — índice composto para histórico paginado</li>
+            <li><code>messages.contact_id + created_at</code> — índice composto para histórico paginado por contato</li>
+            <li><code>messages.conversation_id + created_at</code> — índice composto para filtro por sessão de atendimento</li>
             <li><code>pipeline_items.stage_id + last_moved_at</code> — usado para alertas de inatividade</li>
             <li><code>activity_logs.contact_id</code> — índice simples para timeline do contato</li>
           </ul>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">3.3 Hierarquia das Entidades de Atendimento</div>
+          <div class="code-block">Contact
+  └── Conversation (sessão de atendimento — status, operador responsável)
+        ├── AiSession  (estado da IA — contexto, tokens, provedor)
+        └── Messages   (histórico cronológico vinculado também ao Contact)
+
+Exibição padrão: mensagens filtradas por contact_id → histórico unificado
+Filtro avançado:  mensagens filtradas por conversation_id → granularidade por sessão</div>
         </div>
       </div>
     </div>
@@ -221,12 +255,15 @@
         </div>
 
         <div class="subsection">
-          <div class="subsection-title">4.3 WhatsApp e Mensagens</div>
+          <div class="subsection-title">4.3 WhatsApp, Mensagens e Conversas</div>
           <table class="doc-table">
             <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
             <tbody>
-              <tr><td><code>GET</code></td><td>/contacts/{id}/messages</td><td>Histórico de mensagens paginado</td></tr>
+              <tr><td><code>GET</code></td><td>/contacts/{id}/messages</td><td>Histórico de mensagens paginado (por contact_id)</td></tr>
               <tr><td><code>POST</code></td><td>/contacts/{id}/messages</td><td>Envia mensagem WhatsApp ao contato</td></tr>
+              <tr><td><code>POST</code></td><td>/contacts/{id}/conversations</td><td>Inicia conversa proativa — cria Conversation + AiSession + agenda ScheduleFirstMessage job (RF-WA-06)</td></tr>
+              <tr><td><code>GET</code></td><td>/contacts/{id}/scheduled</td><td>Lista disparos agendados pendentes para o contato (RF-WA-07)</td></tr>
+              <tr><td><code>DELETE</code></td><td>/contacts/{id}/scheduled/{jobId}</td><td>Cancela disparo agendado (handoff antes do timer expirar)</td></tr>
               <tr><td><code>POST</code></td><td>/webhooks/whatsapp</td><td>Endpoint interno para Evolution API (autenticado por HMAC secret)</td></tr>
               <tr><td><code>POST</code></td><td>/contacts/{id}/ai/pause</td><td>Pausa IA para o contato (handoff para humano)</td></tr>
               <tr><td><code>POST</code></td><td>/contacts/{id}/ai/resume</td><td>Reativa IA para o contato</td></tr>
@@ -244,6 +281,19 @@
               <tr><td><code>PATCH</code></td><td>/pipeline/items/{id}/stage</td><td>Move para outro estágio (drag-and-drop)</td></tr>
               <tr><td><code>GET</code></td><td>/pipeline/stages</td><td>Lista estágios configurados</td></tr>
               <tr><td><code>POST</code></td><td>/pipeline/stages</td><td>Cria estágio customizado (Fase 2)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">4.5 Templates Comerciais</div>
+          <table class="doc-table">
+            <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td>/settings/templates</td><td>Lista templates cadastrados (role: agent+)</td></tr>
+              <tr><td><code>POST</code></td><td>/settings/templates</td><td>Cria template de mensagem comercial (role: admin)</td></tr>
+              <tr><td><code>PATCH</code></td><td>/settings/templates/{id}</td><td>Atualiza template (role: admin)</td></tr>
+              <tr><td><code>DELETE</code></td><td>/settings/templates/{id}</td><td>Remove template (role: admin)</td></tr>
             </tbody>
           </table>
         </div>
@@ -266,9 +316,10 @@
 4. Queue Worker executa Job:
    4a. Busca contato pelo phone_whatsapp
    4b. Se não encontrado → cria novo contato (lead automático)
-   4c. Salva mensagem na tabela messages (direction: in)
-   4d. Broadcast via Redis → frontend atualiza chat em tempo real
-   4e. Verifica ai_sessions: se status = active → cria Job: CallAIResponse
+   4c. Busca ou cria Conversation ativa para o contato
+   4d. Salva mensagem na tabela messages (direction: in, conversation_id)
+   4e. Broadcast via Redis → frontend atualiza chat em tempo real
+   4f. Verifica ai_sessions: se status = active → cria Job: CallAIResponse
 5. Job CallAIResponse:
    5a. Busca contexto da conversa (últimas N mensagens + dados do contato)
    5b. Monta prompt com AIProviderInterface::buildPrompt()
@@ -288,7 +339,39 @@
         </div>
 
         <div class="subsection">
-          <div class="subsection-title">5.3 Interface AIProviderInterface (troca de provedor)</div>
+          <div class="subsection-title">5.3 Abertura Proativa de Conversa (RF-WA-06 / RF-WA-07)</div>
+          <div class="code-block">1. Agente cadastra contato e clica em "Iniciar conversa"
+   OU importação CSV cria múltiplos contatos em lote
+
+2. Frontend → POST /api/v1/contacts/{id}/conversations
+3. WhatsAppModule:
+   3a. Cria Conversation (status: bot)
+   3b. Cria AiSession (status: active)
+   3c. Calcula horário de disparo:
+       → Dentro do horário comercial? Agora + 20min
+       → Fora do horário comercial?  Próximo dia útil às 9h
+   3d. Para importações em lote: adiciona offset aleatório de 30–90s entre contatos:
+       Contato 1: horário_base
+       Contato 2: horário_base + rand(30,90)s
+       Contato 3: horário_base + rand(30,90)s + rand(30,90)s
+       ...
+   3e. Despacha Job: ScheduleFirstMessage(contact, conversation, scheduled_at)
+   3f. Retorna job_id para o frontend (visibilidade do agendamento)
+
+4. Janela de 20 minutos — agente pode fazer handoff:
+   → DELETE /contacts/{id}/scheduled/{jobId} → cancela job, IA pausa
+
+5. Job ScheduleFirstMessage executa no horário agendado:
+   5a. Verifica se AiSession ainda está active (não houve handoff)
+   5b. Busca template comercial configurado pelo admin
+   5c. Monta prompt incluindo template + contexto do contato
+   5d. Chama DeepSeek → gera mensagem de abertura personalizada
+   5e. Envia via Evolution API → cliente recebe no WhatsApp
+   5f. Salva message (direction: out, ai_generated: true, conversation_id)</div>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">5.4 Interface AIProviderInterface (troca de provedor)</div>
           <div class="code-block">interface AIProviderInterface {
     public function complete(array $messages, array $context): string;
     public function buildPrompt(Contact $contact, array $history): array;
@@ -325,6 +408,7 @@ $this->app->bind(AIProviderInterface::class, DeepSeekProvider::class);</div>
               <tr><td><code>/pipeline</code></td><td>PipelineKanban</td><td>agent</td></tr>
               <tr><td><code>/reports</code></td><td>ReportsDashboard</td><td>viewer</td></tr>
               <tr><td><code>/settings</code></td><td>Settings (usuários, estágios, bots)</td><td>admin</td></tr>
+              <tr><td><code>/settings/templates</code></td><td>TemplateManager — CRUD de templates comerciais</td><td>admin</td></tr>
             </tbody>
           </table>
         </div>
@@ -343,6 +427,7 @@ $this->app->bind(AIProviderInterface::class, DeepSeekProvider::class);</div>
               <tr><td><code>contacts.store</code></td><td>Lista paginada de contatos, filtros ativos, contato selecionado</td></tr>
               <tr><td><code>chat.store</code></td><td>Mensagens do contato ativo, status da IA, fila de envio</td></tr>
               <tr><td><code>pipeline.store</code></td><td>Estágios, oportunidades por estágio, item em drag</td></tr>
+              <tr><td><code>scheduled.store</code></td><td>Disparos agendados pendentes — permite ao agente visualizar e cancelar antes do timer expirar</td></tr>
               <tr><td><code>notifications.store</code></td><td>Notificações internas não lidas</td></tr>
             </tbody>
           </table>
@@ -366,6 +451,7 @@ $this->app->bind(AIProviderInterface::class, DeepSeekProvider::class);</div>
             <tr><td><strong>Senhas</strong></td><td>Hash bcrypt com custo 12 via Hash::make() do Laravel.</td></tr>
             <tr><td><strong>LGPD</strong></td><td>Dados de terceiros (clientes B2B) não são enviados à DeepSeek API. O prompt inclui apenas tipo de segmento e histórico de conversa anonimizado. CNPJ e dados pessoais são omitidos do contexto de IA.</td></tr>
             <tr><td><strong>Rate Limiting</strong></td><td>60 req/min por IP nas rotas públicas. 300 req/min por usuário nas rotas autenticadas. Implementado via Laravel Throttle middleware.</td></tr>
+            <tr><td><strong>Disparo WhatsApp</strong></td><td>Intervalos aleatórios de 30–90s entre disparos proativos para mitigar risco de banimento de número via Baileys (Evolution API). Volume monitorado pelo crm-worker.</td></tr>
           </tbody>
         </table>
       </div>
@@ -382,15 +468,15 @@ $this->app->bind(AIProviderInterface::class, DeepSeekProvider::class);</div>
           <tbody>
             <tr><td><strong>Repository Pattern</strong></td><td>Abstração da camada de dados. Services consomem Repositories, não Models diretamente. Facilita testes unitários com mocks.</td></tr>
             <tr><td><strong>Provider/Adapter</strong></td><td>AIProviderInterface permite troca de provedor de IA sem impacto nos Services de negócio.</td></tr>
-            <tr><td><strong>Command/Job</strong></td><td>Operações assíncronas (webhook processing, AI calls) implementadas como Laravel Jobs na fila Redis.</td></tr>
+            <tr><td><strong>Command/Job</strong></td><td>Operações assíncronas (webhook processing, AI calls, disparos agendados) implementadas como Laravel Jobs na fila Redis.</td></tr>
             <tr><td><strong>Observer</strong></td><td>Model Observers para disparar activity_logs automaticamente em criação/atualização de contatos e pipeline items.</td></tr>
             <tr><td><strong>DTO (Data Transfer Object)</strong></td><td>Requests validados via Form Requests do Laravel. Respostas padronizadas via API Resources.</td></tr>
-            <tr><td><strong>Composable (Vue.js)</strong></td><td>Lógica reutilizável extraída em composables: useWhatsApp, useAIPause, usePipelineDrag.</td></tr>
+            <tr><td><strong>Composable (Vue.js)</strong></td><td>Lógica reutilizável extraída em composables: useWhatsApp, useAIPause, usePipelineDrag, useScheduled.</td></tr>
           </tbody>
         </table>
 
         <div class="warn-box" style="margin-top:1.5rem">
-          Este documento é uma descrição de design de v1.0. À medida que o desenvolvimento avança, decisões de implementação podem divergir do aqui descrito. O engenheiro deve registrar desvios significativos como atualizações de versão (v1.1, v1.2...) neste documento.
+          Este documento é uma descrição de design viva. À medida que o desenvolvimento avança, decisões de implementação podem divergir do aqui descrito. O engenheiro deve registrar desvios significativos como atualizações de versão neste documento.
         </div>
       </div>
     </div>
@@ -399,7 +485,7 @@ $this->app->bind(AIProviderInterface::class, DeepSeekProvider::class);</div>
 </div>
 
 <footer>
-  <span>SDD-AG-001 · v1.0.0 · ISO/IEC/IEEE 1016:2016</span>
+  <span>SDD-AG-001 · v1.1.0 · ISO/IEC/IEEE 1016:2016</span>
   <span>Matheus Fernandes Cunha — Monk Studio / Açaí Gurau · 2026</span>
 </footer>
 

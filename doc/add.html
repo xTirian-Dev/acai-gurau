@@ -51,10 +51,11 @@
       <p class="doc-subtitle">Descreve a arquitetura do CRM Açaí Gurau através de múltiplos viewpoints, cobrindo contexto, containers, componentes, implantação e as decisões arquiteturais registradas.</p>
       <div class="doc-meta-row">
         <div class="doc-meta-item"><span class="doc-meta-label">Documento</span><span class="doc-meta-val">ADD-AG-001</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.0.0</span></div>
-        <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">18 de Março de 2026</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Versão</span><span class="doc-meta-val">1.1.0</span></div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Data</span><span class="doc-meta-val">21 de Março de 2026</span></div>
         <div class="doc-meta-item"><span class="doc-meta-label">Autor</span><span class="doc-meta-val">Matheus Fernandes Cunha</span></div>
         <div class="doc-meta-item"><span class="doc-meta-label">Contratante</span><span class="doc-meta-val">Monk Studio</span></div>
+        <div class="doc-meta-val" style="background:var(--amber-50,#fffbeb);color:var(--amber,#d97706);border:1px solid var(--amber,#d97706);padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">Revisado</div>
       </div>
     </div>
 
@@ -70,7 +71,17 @@
         </div>
         <div class="subsection">
           <div class="subsection-title">1.2 Sistema de Interesse (SoI)</div>
-          <p>O sistema de interesse é a plataforma CRM com automação WhatsApp e IA conversacional, composta por uma API REST em Laravel, um SPA em Vue.js, uma instância da Evolution API e integração com o serviço de IA DeepSeek V3.2. Todos os componentes rodam em containers Docker em um único VPS Hetzner.</p>
+          <p>O sistema de interesse é a plataforma CRM com automação WhatsApp e IA conversacional, composta por uma API REST em Laravel, um SPA em Vue.js, uma instância da Evolution API e integração com o serviço de IA DeepSeek V3.2. Todos os componentes rodam em containers Docker em um único VPS Hetzner. O modelo de atendimento é estruturado em torno da entidade <code>Conversation</code>, que representa cada sessão de atendimento vinculada a um contato, com status, operador responsável e sessões de IA associadas.</p>
+        </div>
+        <div class="subsection">
+          <div class="subsection-title">1.3 Histórico de Revisões</div>
+          <table class="doc-table">
+            <thead><tr><th>Versão</th><th>Data</th><th>Alterações</th></tr></thead>
+            <tbody>
+              <tr><td><code>1.0.0</code></td><td>18/03/2026</td><td>Emissão inicial</td></tr>
+              <tr><td><code>1.1.0</code></td><td>21/03/2026</td><td>PHP 8.3 → 8.4 no container crm-api. Entidade <code>Conversation</code> documentada no SoI. <code>crm-worker</code> atualizado com jobs de disparo agendado. <code>WhatsAppModule</code> e <code>QueueModule</code> expandidos. ADR-005 e ADR-006 adicionados.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -139,7 +150,11 @@
                         ↓
               Evolution API ←→ WhatsApp/Meta
                         ↓
-              DeepSeek API (quando IA ativa)</div>
+              DeepSeek API (quando IA ativa)
+
+Fluxo proativo (RF-WA-06):
+Agente cadastra contato → crm-api agenda ScheduleFirstMessage job (Redis)
+→ crm-worker executa no horário → Evolution API → WhatsApp/Meta</div>
         </div>
       </div>
     </div>
@@ -155,8 +170,8 @@
           <tbody>
             <tr>
               <td><strong>crm-api</strong></td>
-              <td>Laravel 11 + PHP 8.3 + FPM</td>
-              <td>API REST — autenticação, CRM, pipeline, integração com Evolution API e DeepSeek</td>
+              <td>Laravel 11 + PHP 8.4 + FPM</td>
+              <td>API REST — autenticação, CRM, pipeline, conversas, templates, integração com Evolution API e DeepSeek</td>
               <td>9000 (interno)</td>
             </tr>
             <tr>
@@ -174,13 +189,13 @@
             <tr>
               <td><strong>mysql</strong></td>
               <td>MySQL 8.0</td>
-              <td>Persistência relacional — contatos, pipeline, mensagens, usuários, logs</td>
+              <td>Persistência relacional — contatos, conversations, pipeline, mensagens, ai_sessions, templates, logs</td>
               <td>3306 (interno)</td>
             </tr>
             <tr>
               <td><strong>redis</strong></td>
               <td>Redis 7</td>
-              <td>Cache de sessão, filas de mensagens (Laravel Queues) e pub/sub para webhooks WhatsApp</td>
+              <td>Cache de sessão, filas de mensagens (Laravel Queues), pub/sub para webhooks WhatsApp e agendamento de disparos proativos</td>
               <td>6379 (interno)</td>
             </tr>
             <tr>
@@ -192,7 +207,7 @@
             <tr>
               <td><strong>crm-worker</strong></td>
               <td>Laravel Queue Worker (mesmo container crm-api ou separado)</td>
-              <td>Processa filas: webhooks WhatsApp recebidos, chamadas à IA, notificações internas</td>
+              <td>Processa filas: webhooks WhatsApp recebidos, chamadas à IA, disparos agendados (ScheduleFirstMessage) com intervalos aleatórios, notificações internas</td>
               <td>— (worker)</td>
             </tr>
           </tbody>
@@ -205,9 +220,9 @@
               <tr><td>nginx</td><td>crm-api</td><td>FastCGI/HTTP</td><td>Proxy de requisições /api/*</td></tr>
               <tr><td>crm-frontend</td><td>crm-api</td><td>HTTPS REST</td><td>Chamadas de API do SPA</td></tr>
               <tr><td>evolution-api</td><td>crm-api</td><td>HTTP Webhook</td><td>Notifica mensagens WhatsApp recebidas</td></tr>
-              <tr><td>crm-api</td><td>evolution-api</td><td>HTTP REST</td><td>Envia mensagens WhatsApp</td></tr>
+              <tr><td>crm-api</td><td>evolution-api</td><td>HTTP REST</td><td>Envia mensagens WhatsApp (reativas e proativas)</td></tr>
               <tr><td>crm-api</td><td>DeepSeek API</td><td>HTTPS REST</td><td>Requisições de completions de IA</td></tr>
-              <tr><td>crm-api / worker</td><td>redis</td><td>Redis protocol</td><td>Cache, filas e pub/sub</td></tr>
+              <tr><td>crm-api / worker</td><td>redis</td><td>Redis protocol</td><td>Cache, filas, pub/sub e jobs agendados</td></tr>
               <tr><td>crm-api / worker</td><td>mysql</td><td>MySQL protocol</td><td>Leitura e escrita de dados</td></tr>
             </tbody>
           </table>
@@ -224,14 +239,15 @@
         <table class="doc-table">
           <thead><tr><th>Componente</th><th>Camada</th><th>Responsabilidade</th></tr></thead>
           <tbody>
-            <tr><td><strong>AuthModule</strong></td><td>HTTP / Middleware</td><td>Login, logout, refresh de token JWT, guards de role</td></tr>
+            <tr><td><strong>AuthModule</strong></td><td>HTTP / Middleware</td><td>Login, logout, refresh de token JWT, guards de role, heartbeat de presença (is_online)</td></tr>
             <tr><td><strong>ContactModule</strong></td><td>Domain</td><td>CRUD de contatos, tags, importação CSV, segmentação</td></tr>
             <tr><td><strong>PipelineModule</strong></td><td>Domain</td><td>Gestão de oportunidades, estágios, automações e notificações</td></tr>
-            <tr><td><strong>WhatsAppModule</strong></td><td>Integration</td><td>Recebe webhooks da Evolution API, envia mensagens, sincroniza contatos</td></tr>
-            <tr><td><strong>AIModule</strong></td><td>Integration</td><td>Orquestra chamadas ao DeepSeek, gerencia contexto da conversa, controla handoff</td></tr>
+            <tr><td><strong>WhatsAppModule</strong></td><td>Integration</td><td>Recebe webhooks da Evolution API, envia mensagens reativas e proativas, gerencia Conversations, sincroniza contatos</td></tr>
+            <tr><td><strong>AIModule</strong></td><td>Integration</td><td>Orquestra chamadas ao DeepSeek, gerencia contexto da conversa via AiSession, controla handoff, usa templates comerciais na abertura proativa</td></tr>
+            <tr><td><strong>TemplateModule</strong></td><td>Domain</td><td>CRUD de templates de mensagem comercial, vinculação ao fluxo de abertura proativa</td></tr>
             <tr><td><strong>ReportModule</strong></td><td>Domain</td><td>Agrega dados para dashboard e relatórios de funil</td></tr>
             <tr><td><strong>NotificationModule</strong></td><td>Infrastructure</td><td>Notificações internas via broadcast (Laravel Echo / Redis)</td></tr>
-            <tr><td><strong>QueueModule</strong></td><td>Infrastructure</td><td>Define e despacha jobs: ProcessWhatsAppWebhook, CallAIResponse, SendNotification</td></tr>
+            <tr><td><strong>QueueModule</strong></td><td>Infrastructure</td><td>Define e despacha jobs: ProcessWhatsAppWebhook, CallAIResponse, ScheduleFirstMessage, SendNotification</td></tr>
           </tbody>
         </table>
         <div class="info-box">A API segue a arquitetura em camadas: HTTP (Controllers/Routes) → Domain (Services/Models) → Infrastructure (Repositories/Integrations). Comunicação entre módulos ocorre via Service classes injetadas por DI do Laravel.</div>
@@ -262,11 +278,11 @@
           <div class="code-block">version: '3.8'
 services:
   nginx:        # Reverse proxy + SSL termination
-  crm-api:      # Laravel 11 PHP-FPM
-  crm-worker:   # Laravel Queue Worker
+  crm-api:      # Laravel 11 PHP-FPM (PHP 8.4)
+  crm-worker:   # Laravel Queue Worker — processa jobs incluindo ScheduleFirstMessage
   crm-frontend: # Vue.js build estático (Nginx interno)
   mysql:        # MySQL 8 — volume persistente
-  redis:        # Redis 7 — filas e cache
+  redis:        # Redis 7 — filas, cache e jobs agendados
   evolution-api: # Evolution API v2 — WhatsApp
 
 networks:
@@ -334,6 +350,30 @@ networks:
           </table>
         </div>
 
+        <div class="subsection">
+          <div class="subsection-title">ADR-005 — Entidade Conversation como camada de sessão de atendimento</div>
+          <table class="doc-table">
+            <tbody>
+              <tr><td style="width:120px;font-weight:600;color:var(--gray-600)">Status</td><td>Aceito</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Contexto</td><td>O modelo original do SDD não previa separação entre histórico de mensagens e sessão de atendimento. Durante o desenvolvimento dos Models foi identificada a necessidade de rastrear status de atendimento (bot/waiting/active/closed), operador responsável e presença online para handoff direcionado.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Decisão</td><td>Adicionada entidade <code>Conversation</code> entre <code>Contact</code> e <code>AiSession</code>. Mensagens mantêm <code>contact_id</code> para histórico unificado e recebem <code>conversation_id</code> nullable para granularidade futura por sessão.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Consequências</td><td>Histórico de atendimento separado por sessão sem quebrar o fluxo de exibição por contato. Permite rastrear tempo de atendimento, operador responsável e múltiplas sessões de IA ao longo do tempo. Complexidade de modelo levemente aumentada.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-title">ADR-006 — Queue com intervalos aleatórios para disparos proativos (RF-WA-07)</div>
+          <table class="doc-table">
+            <tbody>
+              <tr><td style="width:120px;font-weight:600;color:var(--gray-600)">Status</td><td>Aceito</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Contexto</td><td>O fluxo de abertura proativa de conversa (RF-WA-06) pode ser acionado em lote via importação CSV. Disparos simultâneos ou em intervalos fixos aumentam o risco de banimento do número WhatsApp pela Meta.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Decisão</td><td>Job <code>ScheduleFirstMessage</code> agendado com offset acumulado de 30–90 segundos aleatórios entre contatos. Disparos fora do horário comercial reagendados para o próximo dia útil às 9h. Timer de 20 minutos preservado como janela de handoff para o agente.</td></tr>
+              <tr><td style="font-weight:600;color:var(--gray-600)">Consequências</td><td>Comportamento de disparo simula uso humano natural, reduzindo risco de detecção e banimento. Agente tem visibilidade dos jobs agendados e pode cancelar antes do disparo. Lotes grandes de importação são processados ao longo de minutos/horas em vez de segundos.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
 
@@ -341,7 +381,7 @@ networks:
 </div>
 
 <footer>
-  <span>ADD-AG-001 · v1.0.0 · ISO/IEC/IEEE 42010:2011</span>
+  <span>ADD-AG-001 · v1.1.0 · ISO/IEC/IEEE 42010:2011</span>
   <span>Matheus Fernandes Cunha — Monk Studio / Açaí Gurau · 2026</span>
 </footer>
 

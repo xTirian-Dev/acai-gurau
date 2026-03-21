@@ -140,6 +140,7 @@
   .status-table tr:last-child td { border-bottom: none; }
   .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; }
   .dot-done { background: var(--green); }
+  .dot-revised { background: var(--amber); }
   .dot-progress { background: var(--blue); }
   .dot-pending { background: var(--gray-400); }
   .chip {
@@ -177,7 +178,7 @@
   <span class="topbar-sep">/</span>
   <span class="topbar-project">Documentação Técnica</span>
   <div class="topbar-right">
-    <span class="topbar-badge">v1.0.0</span>
+    <span class="topbar-badge">v1.1.0</span>
   </div>
 </div>
 
@@ -201,7 +202,7 @@
       </div>
       <div class="hero-meta-item">
         <span class="hero-meta-label">Versão</span>
-        <span class="hero-meta-val">1.0.0 — Março 2026</span>
+        <span class="hero-meta-val">1.1.0 — Março 2026</span>
       </div>
     </div>
   </div>
@@ -219,7 +220,7 @@
       </div>
       <div class="doc-card-desc">Requisitos funcionais e não-funcionais do sistema, stakeholders, casos de uso e critérios de aceite baseados no domínio de negócio da Açaí Gurau.</div>
       <div class="doc-card-footer">
-        <span class="doc-card-version">v1.0 · 18 Mar 2026</span>
+        <span class="doc-card-version">v1.1 · 21 Mar 2026</span>
         <span class="doc-card-arrow">Abrir →</span>
       </div>
     </a>
@@ -231,7 +232,7 @@
       </div>
       <div class="doc-card-desc">Viewpoints e views arquiteturais do sistema: contexto, containers, componentes e decisões arquiteturais registradas (ADRs).</div>
       <div class="doc-card-footer">
-        <span class="doc-card-version">v1.0 · 18 Mar 2026</span>
+        <span class="doc-card-version">v1.1 · 21 Mar 2026</span>
         <span class="doc-card-arrow">Abrir →</span>
       </div>
     </a>
@@ -243,7 +244,7 @@
       </div>
       <div class="doc-card-desc">Design detalhado dos módulos, interfaces de API, modelo de dados, fluxos de integração e padrões de implementação adotados.</div>
       <div class="doc-card-footer">
-        <span class="doc-card-version">v1.0 · 18 Mar 2026</span>
+        <span class="doc-card-version">v1.1 · 21 Mar 2026</span>
         <span class="doc-card-arrow">Abrir →</span>
       </div>
     </a>
@@ -262,7 +263,7 @@
     </div>
     <div class="info-card">
       <div class="info-card-title">Stack Técnica</div>
-      <div class="info-row"><span class="info-key">API Backend</span><span class="info-val">Laravel 11</span></div>
+      <div class="info-row"><span class="info-key">API Backend</span><span class="info-val">Laravel 11 + PHP 8.4</span></div>
       <div class="info-row"><span class="info-key">Frontend</span><span class="info-val">Vue.js 3 + Pinia</span></div>
       <div class="info-row"><span class="info-key">Banco de dados</span><span class="info-val">MySQL 8</span></div>
       <div class="info-row"><span class="info-key">Cache / Filas</span><span class="info-val">Redis</span></div>
@@ -301,26 +302,26 @@
       <tr>
         <td><strong>SRS</strong> — Especificação de Requisitos</td>
         <td><span class="chip chip-srs">29148:2018</span></td>
-        <td style="font-family:var(--mono);font-size:0.78rem">v1.0</td>
-        <td><span class="status-dot dot-done"></span>Emitido</td>
+        <td style="font-family:var(--mono);font-size:0.78rem">v1.1</td>
+        <td><span class="status-dot dot-revised"></span>Revisado</td>
         <td>Matheus F. Cunha</td>
-        <td style="font-family:var(--mono);font-size:0.78rem">18/03/2026</td>
+        <td style="font-family:var(--mono);font-size:0.78rem">21/03/2026</td>
       </tr>
       <tr>
         <td><strong>ADD</strong> — Descrição de Arquitetura</td>
         <td><span class="chip chip-add">42010:2011</span></td>
-        <td style="font-family:var(--mono);font-size:0.78rem">v1.0</td>
-        <td><span class="status-dot dot-done"></span>Emitido</td>
+        <td style="font-family:var(--mono);font-size:0.78rem">v1.1</td>
+        <td><span class="status-dot dot-revised"></span>Revisado</td>
         <td>Matheus F. Cunha</td>
-        <td style="font-family:var(--mono);font-size:0.78rem">18/03/2026</td>
+        <td style="font-family:var(--mono);font-size:0.78rem">21/03/2026</td>
       </tr>
       <tr>
         <td><strong>SDD</strong> — Descrição de Design</td>
         <td><span class="chip chip-sdd">1016:2016</span></td>
-        <td style="font-family:var(--mono);font-size:0.78rem">v1.0</td>
-        <td><span class="status-dot dot-done"></span>Emitido</td>
+        <td style="font-family:var(--mono);font-size:0.78rem">v1.1</td>
+        <td><span class="status-dot dot-revised"></span>Revisado</td>
         <td>Matheus F. Cunha</td>
-        <td style="font-family:var(--mono);font-size:0.78rem">18/03/2026</td>
+        <td style="font-family:var(--mono);font-size:0.78rem">21/03/2026</td>
       </tr>
     </tbody>
   </table>
@@ -328,7 +329,7 @@
 </div>
 
 <footer>
-  <span>Açaí Gurau · Monk Studio · Documentação Técnica v1.0.0</span>
+  <span>Açaí Gurau · Monk Studio · Documentação Técnica v1.1.0</span>
   <span>Matheus Fernandes Cunha — Engenheiro de Software · 2026</span>
 </footer>
 
